@@ -191,6 +191,15 @@ function normalizeBoolean(value, defaultValue = false) {
   return defaultValue;
 }
 
+function normalizeRedirectMode(value) {
+  const validModes = ['qr-page', '301', '302'];
+  const mode = String(value || '').trim().toLowerCase();
+  if (validModes.includes(mode)) {
+    return mode;
+  }
+  return '302'; // 默认 302 重定向
+}
+
 function assertValidTarget(target) {
   let parsed;
   try {
@@ -297,6 +306,7 @@ function normalizeMappingPayload(payload, options = {}) {
   const expiry = normalizeExpiry(payload.expiry);
   const enabled = normalizeBoolean(payload.enabled, true);
   const isWechat = normalizeBoolean(payload.isWechat, false);
+  const redirectMode = normalizeRedirectMode(payload.redirectMode || payload.redirect_mode);
   const qrCodeData = payload.qrCodeData ? String(payload.qrCodeData).trim() : '';
   const announcementHtml = sanitizeRichText(payload.announcementHtml || payload.announcement_html || '', '');
   const hintHtml = sanitizeRichText(payload.hintHtml || payload.hint_html || '', '');
@@ -327,6 +337,7 @@ function normalizeMappingPayload(payload, options = {}) {
     expiry,
     enabled,
     isWechat,
+    redirectMode,
     qrCodeData: isWechat ? qrCodeData : null,
     announcementHtml: announcementHtml || null,
     hintHtml: hintHtml || null,
@@ -379,6 +390,7 @@ function serializeMapping(row) {
     expiry: row.expiry ? String(row.expiry).slice(0, 10) : '',
     enabled: row.enabled === 1 || row.enabled === true,
     isWechat: row.isWechat === 1 || row.isWechat === true,
+    redirectMode: row.redirectMode || row.redirect_mode || '302',
     qrCodeData: row.qrCodeData || '',
     announcementHtml: row.announcementHtml || row.announcement_html || '',
     hintHtml: row.hintHtml || row.hint_html || '',
@@ -477,6 +489,9 @@ async function initDatabase() {
   if (!columns.has('hintHtml')) {
     await DB.prepare('ALTER TABLE mappings ADD COLUMN hintHtml TEXT').run();
   }
+  if (!columns.has('redirectMode')) {
+    await DB.prepare('ALTER TABLE mappings ADD COLUMN redirectMode TEXT DEFAULT \'302\'').run();
+  }
   if (!columns.has('visit_count')) {
     await DB.prepare('ALTER TABLE mappings ADD COLUMN visit_count INTEGER DEFAULT 0').run();
   }
@@ -503,7 +518,7 @@ async function initDatabase() {
 
 async function getMappingByPath(path) {
   const mapping = await DB.prepare(`
-    SELECT path, target, name, expiry, enabled, isWechat, qrCodeData, announcementHtml, hintHtml, visit_count, last_visited_at, created_at, updated_at
+    SELECT path, target, name, expiry, enabled, isWechat, redirectMode, qrCodeData, announcementHtml, hintHtml, visit_count, last_visited_at, created_at, updated_at
     FROM mappings
     WHERE path = ?
   `).bind(path).first();
@@ -524,9 +539,9 @@ async function createMapping(payload, options = {}) {
   if (options.includeMeta) {
     await DB.prepare(`
       INSERT INTO mappings (
-        path, target, name, expiry, enabled, isWechat, qrCodeData, announcementHtml, hintHtml,
+        path, target, name, expiry, enabled, isWechat, redirectMode, qrCodeData, announcementHtml, hintHtml,
         visit_count, last_visited_at, created_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `).bind(
       mapping.path,
       mapping.target,
@@ -534,6 +549,7 @@ async function createMapping(payload, options = {}) {
       mapping.expiry,
       mapping.enabled ? 1 : 0,
       mapping.isWechat ? 1 : 0,
+      mapping.redirectMode,
       mapping.qrCodeData,
       mapping.announcementHtml,
       mapping.hintHtml,
@@ -544,8 +560,8 @@ async function createMapping(payload, options = {}) {
     ).run();
   } else {
     await DB.prepare(`
-      INSERT INTO mappings (path, target, name, expiry, enabled, isWechat, qrCodeData, announcementHtml, hintHtml, updated_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO mappings (path, target, name, expiry, enabled, isWechat, redirectMode, qrCodeData, announcementHtml, hintHtml, updated_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `).bind(
       mapping.path,
       mapping.target,
@@ -553,6 +569,7 @@ async function createMapping(payload, options = {}) {
       mapping.expiry,
       mapping.enabled ? 1 : 0,
       mapping.isWechat ? 1 : 0,
+      mapping.redirectMode,
       mapping.qrCodeData,
       mapping.announcementHtml,
       mapping.hintHtml,
@@ -587,7 +604,7 @@ async function updateMapping(payload) {
 
   await DB.prepare(`
     UPDATE mappings
-    SET path = ?, target = ?, name = ?, expiry = ?, enabled = ?, isWechat = ?, qrCodeData = ?, announcementHtml = ?, hintHtml = ?, updated_at = ?
+    SET path = ?, target = ?, name = ?, expiry = ?, enabled = ?, isWechat = ?, redirectMode = ?, qrCodeData = ?, announcementHtml = ?, hintHtml = ?, updated_at = ?
     WHERE path = ?
   `).bind(
     mapping.path,
@@ -596,6 +613,7 @@ async function updateMapping(payload) {
     mapping.expiry,
     mapping.enabled ? 1 : 0,
     mapping.isWechat ? 1 : 0,
+    mapping.redirectMode,
     qrCodeData,
     mapping.announcementHtml,
     mapping.hintHtml,
@@ -1034,13 +1052,19 @@ async function handleMappingRequest(path, env, ctx) {
 
   ctx.waitUntil(trackVisit(path));
 
-  if (mapping.isWechat && mapping.qrCodeData) {
+  // 获取重定向模式，默认为 302
+  const redirectMode = mapping.redirectMode || '302';
+
+  // 如果是微信二维码且选择 qr-page 模式，展示二维码页面
+  if (mapping.isWechat && mapping.qrCodeData && redirectMode === 'qr-page') {
     return new Response(createWechatHtml(mapping), {
       headers: { 'Content-Type': 'text/html;charset=UTF-8', 'Cache-Control': 'no-store' },
     });
   }
 
-  return Response.redirect(mapping.target, 302);
+  // 根据 redirectMode 返回对应状态码的重定向
+  const statusCode = redirectMode === '301' ? 301 : 302;
+  return Response.redirect(mapping.target, statusCode);
 }
 
 export default {

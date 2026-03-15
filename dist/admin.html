@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-CN" data-theme="light">
+
 <head>
   <script>
     (function () {
@@ -19,38 +20,47 @@
       min-height: 100vh;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     }
+
     .dropzone {
       transition: border-color 0.2s ease, background-color 0.2s ease, transform 0.2s ease;
     }
+
     .dropzone.dragover {
       transform: translateY(-2px);
     }
+
     .target-link,
     .target-text {
       white-space: normal;
       word-break: break-word;
       overflow-wrap: anywhere;
     }
+
     #alertContainer {
       pointer-events: none;
     }
+
     #alertContainer .alert {
       pointer-events: auto;
       min-width: min(92vw, 420px);
     }
+
     .dashboard-shell {
       min-height: 100vh;
     }
+
     .modal-box-responsive {
       width: min(96vw, 960px);
       max-height: calc(100vh - 2rem);
       overflow-y: auto;
     }
+
     .editor-toolbar {
       display: flex;
       flex-wrap: wrap;
       gap: 0.5rem;
     }
+
     .rich-editor {
       min-height: 120px;
       border: 1px solid rgba(148, 163, 184, 0.35);
@@ -63,28 +73,35 @@
       word-break: break-word;
       overflow-wrap: anywhere;
     }
+
     .rich-editor:focus {
       border-color: rgba(59, 130, 246, 0.7);
       box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.18);
     }
+
     .rich-editor[data-empty="true"]::before {
       content: attr(data-placeholder);
       color: rgba(100, 116, 139, 0.9);
       pointer-events: none;
     }
+
     .rich-editor :where(p, div, ul, ol) {
       margin: 0.55rem 0 0;
     }
+
     .rich-editor :where(p, div, ul, ol):first-child {
       margin-top: 0;
     }
+
     .rich-editor :where(ul, ol) {
       padding-left: 1.35rem;
     }
+
     .rich-editor a {
       color: #2563eb;
       text-decoration: underline;
     }
+
     @media (max-width: 640px) {
       .modal-box-responsive {
         width: calc(100vw - 1rem);
@@ -94,6 +111,7 @@
     }
   </style>
 </head>
+
 <body class="bg-base-200 text-base-content">
   <div id="alertContainer" class="fixed top-4 left-1/2 z-50 flex -translate-x-1/2 flex-col gap-3"></div>
 
@@ -161,6 +179,14 @@
           <span class="label-text mb-2">有效日期</span>
           <input id="edit-expiry" type="date" class="input input-bordered w-full">
         </label>
+        <label class="form-control lg:col-span-1">
+          <span class="label-text mb-2">跳转方式</span>
+          <select id="edit-redirect-mode" class="select select-bordered w-full">
+            <option value="302">302 临时重定向</option>
+            <option value="301">301 永久重定向</option>
+            <option value="qr-page">二维码展示页</option>
+          </select>
+        </label>
         <div class="flex flex-col gap-3 lg:col-span-1 lg:justify-end">
           <label class="label cursor-pointer justify-start gap-2 p-0">
             <input id="edit-enabled" type="checkbox" class="toggle toggle-primary">
@@ -178,15 +204,23 @@
               <div class="text-sm opacity-70">显示在标题下方，支持链接和简单排版</div>
             </div>
             <div class="editor-toolbar">
-              <button type="button" class="btn btn-xs btn-outline" data-editor-target="edit-announcement-editor" data-editor-command="bold">粗体</button>
-              <button type="button" class="btn btn-xs btn-outline" data-editor-target="edit-announcement-editor" data-editor-command="italic">斜体</button>
-              <button type="button" class="btn btn-xs btn-outline" data-editor-target="edit-announcement-editor" data-editor-command="underline">下划线</button>
-              <button type="button" class="btn btn-xs btn-outline" data-editor-target="edit-announcement-editor" data-editor-command="unorderedList">列表</button>
-              <button type="button" class="btn btn-xs btn-outline" data-editor-target="edit-announcement-editor" data-editor-command="orderedList">编号</button>
-              <button type="button" class="btn btn-xs btn-outline" data-editor-target="edit-announcement-editor" data-editor-command="link">链接</button>
-              <button type="button" class="btn btn-xs btn-ghost" data-editor-target="edit-announcement-editor" data-editor-command="clear">清除</button>
+              <button type="button" class="btn btn-xs btn-outline" data-editor-target="edit-announcement-editor"
+                data-editor-command="bold">粗体</button>
+              <button type="button" class="btn btn-xs btn-outline" data-editor-target="edit-announcement-editor"
+                data-editor-command="italic">斜体</button>
+              <button type="button" class="btn btn-xs btn-outline" data-editor-target="edit-announcement-editor"
+                data-editor-command="underline">下划线</button>
+              <button type="button" class="btn btn-xs btn-outline" data-editor-target="edit-announcement-editor"
+                data-editor-command="unorderedList">列表</button>
+              <button type="button" class="btn btn-xs btn-outline" data-editor-target="edit-announcement-editor"
+                data-editor-command="orderedList">编号</button>
+              <button type="button" class="btn btn-xs btn-outline" data-editor-target="edit-announcement-editor"
+                data-editor-command="link">链接</button>
+              <button type="button" class="btn btn-xs btn-ghost" data-editor-target="edit-announcement-editor"
+                data-editor-command="clear">清除</button>
             </div>
-            <div id="edit-announcement-editor" class="rich-editor" contenteditable="true" data-placeholder="请输入标题下方公告" data-empty="true"></div>
+            <div id="edit-announcement-editor" class="rich-editor" contenteditable="true" data-placeholder="请输入标题下方公告"
+              data-empty="true"></div>
           </div>
         </div>
         <div class="rounded-2xl border border-base-300 bg-base-200 p-4 lg:col-span-2">
@@ -196,15 +230,23 @@
               <div class="text-sm opacity-70">显示在二维码下方，支持链接和简单排版</div>
             </div>
             <div class="editor-toolbar">
-              <button type="button" class="btn btn-xs btn-outline" data-editor-target="edit-hint-editor" data-editor-command="bold">粗体</button>
-              <button type="button" class="btn btn-xs btn-outline" data-editor-target="edit-hint-editor" data-editor-command="italic">斜体</button>
-              <button type="button" class="btn btn-xs btn-outline" data-editor-target="edit-hint-editor" data-editor-command="underline">下划线</button>
-              <button type="button" class="btn btn-xs btn-outline" data-editor-target="edit-hint-editor" data-editor-command="unorderedList">列表</button>
-              <button type="button" class="btn btn-xs btn-outline" data-editor-target="edit-hint-editor" data-editor-command="orderedList">编号</button>
-              <button type="button" class="btn btn-xs btn-outline" data-editor-target="edit-hint-editor" data-editor-command="link">链接</button>
-              <button type="button" class="btn btn-xs btn-ghost" data-editor-target="edit-hint-editor" data-editor-command="clear">清除</button>
+              <button type="button" class="btn btn-xs btn-outline" data-editor-target="edit-hint-editor"
+                data-editor-command="bold">粗体</button>
+              <button type="button" class="btn btn-xs btn-outline" data-editor-target="edit-hint-editor"
+                data-editor-command="italic">斜体</button>
+              <button type="button" class="btn btn-xs btn-outline" data-editor-target="edit-hint-editor"
+                data-editor-command="underline">下划线</button>
+              <button type="button" class="btn btn-xs btn-outline" data-editor-target="edit-hint-editor"
+                data-editor-command="unorderedList">列表</button>
+              <button type="button" class="btn btn-xs btn-outline" data-editor-target="edit-hint-editor"
+                data-editor-command="orderedList">编号</button>
+              <button type="button" class="btn btn-xs btn-outline" data-editor-target="edit-hint-editor"
+                data-editor-command="link">链接</button>
+              <button type="button" class="btn btn-xs btn-ghost" data-editor-target="edit-hint-editor"
+                data-editor-command="clear">清除</button>
             </div>
-            <div id="edit-hint-editor" class="rich-editor" contenteditable="true" data-placeholder="请输入二维码下方提示" data-empty="true"></div>
+            <div id="edit-hint-editor" class="rich-editor" contenteditable="true" data-placeholder="请输入二维码下方提示"
+              data-empty="true"></div>
           </div>
         </div>
       </div>
@@ -256,15 +298,18 @@
 
   <div class="dashboard-shell">
     <div class="navbar sticky top-0 z-30 border-b border-base-300 bg-base-100/90 px-3 backdrop-blur sm:px-4">
-      <div class="mx-auto flex w-full max-w-7xl flex-col items-start gap-3 py-3 sm:flex-row sm:items-center sm:justify-between sm:py-2">
+      <div
+        class="mx-auto flex w-full max-w-7xl flex-col items-start gap-3 py-3 sm:flex-row sm:items-center sm:justify-between sm:py-2">
         <div>
           <div class="text-xl font-bold text-primary">二维码短链管理后台</div>
           <div class="text-sm text-base-content/60">更顺手地管理短链、微信群二维码和访问数据</div>
         </div>
         <div class="flex w-full items-center justify-end gap-2 sm:w-auto">
           <button id="theme-toggle-btn" class="btn btn-ghost btn-circle" type="button" aria-label="切换主题">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="h-6 w-6">
-              <path id="theme-toggle-path" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+              class="h-6 w-6">
+              <path id="theme-toggle-path" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
             </svg>
           </button>
           <button id="logout-btn" class="btn btn-error btn-sm" type="button">退出登录</button>
@@ -312,7 +357,8 @@
         </div>
       </section>
 
-      <section class="grid gap-4 xl:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)] 2xl:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] xl:items-start">
+      <section
+        class="grid gap-4 xl:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)] 2xl:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] xl:items-start">
         <div class="card bg-base-100 shadow-sm xl:sticky xl:top-24">
           <div class="card-body p-5">
             <div class="flex items-start justify-between gap-3">
@@ -322,7 +368,8 @@
               </div>
               <button id="reset-qr-btn" type="button" class="btn btn-ghost btn-sm">清空</button>
             </div>
-            <button id="upload-trigger-btn" type="button" class="dropzone mt-4 flex min-h-48 w-full flex-col items-center justify-center rounded-2xl border-2 border-dashed border-primary/40 bg-base-200 px-6 text-center hover:border-primary hover:bg-base-200/80">
+            <button id="upload-trigger-btn" type="button"
+              class="dropzone mt-4 flex min-h-48 w-full flex-col items-center justify-center rounded-2xl border-2 border-dashed border-primary/40 bg-base-200 px-6 text-center hover:border-primary hover:bg-base-200/80">
               <div class="text-lg font-medium">点击上传或拖拽二维码图片到这里</div>
               <div class="mt-2 text-sm text-base-content/60">支持常见图片格式，识别成功后会自动填充到右侧表单</div>
             </button>
@@ -356,11 +403,20 @@
               </label>
               <label class="form-control lg:col-span-2">
                 <span class="label-text mb-2">目标 URL</span>
-                <input id="create-target" type="text" class="input input-bordered w-full" placeholder="https://example.com">
+                <input id="create-target" type="text" class="input input-bordered w-full"
+                  placeholder="https://example.com">
               </label>
               <label class="form-control lg:col-span-1">
                 <span class="label-text mb-2">有效日期</span>
                 <input id="create-expiry" type="date" class="input input-bordered w-full">
+              </label>
+              <label class="form-control lg:col-span-1">
+                <span class="label-text mb-2">跳转方式</span>
+                <select id="create-redirect-mode" class="select select-bordered w-full">
+                  <option value="302">302 临时重定向</option>
+                  <option value="301">301 永久重定向</option>
+                  <option value="qr-page">二维码展示页</option>
+                </select>
               </label>
               <div class="flex flex-col gap-3 lg:col-span-1 lg:justify-end">
                 <label class="label cursor-pointer justify-start gap-2 p-0">
@@ -379,15 +435,23 @@
                     <div class="text-sm opacity-70">显示在标题下方，支持链接和简单排版</div>
                   </div>
                   <div class="editor-toolbar">
-                    <button type="button" class="btn btn-xs btn-outline" data-editor-target="create-announcement-editor" data-editor-command="bold">粗体</button>
-                    <button type="button" class="btn btn-xs btn-outline" data-editor-target="create-announcement-editor" data-editor-command="italic">斜体</button>
-                    <button type="button" class="btn btn-xs btn-outline" data-editor-target="create-announcement-editor" data-editor-command="underline">下划线</button>
-                    <button type="button" class="btn btn-xs btn-outline" data-editor-target="create-announcement-editor" data-editor-command="unorderedList">列表</button>
-                    <button type="button" class="btn btn-xs btn-outline" data-editor-target="create-announcement-editor" data-editor-command="orderedList">编号</button>
-                    <button type="button" class="btn btn-xs btn-outline" data-editor-target="create-announcement-editor" data-editor-command="link">链接</button>
-                    <button type="button" class="btn btn-xs btn-ghost" data-editor-target="create-announcement-editor" data-editor-command="clear">清除</button>
+                    <button type="button" class="btn btn-xs btn-outline" data-editor-target="create-announcement-editor"
+                      data-editor-command="bold">粗体</button>
+                    <button type="button" class="btn btn-xs btn-outline" data-editor-target="create-announcement-editor"
+                      data-editor-command="italic">斜体</button>
+                    <button type="button" class="btn btn-xs btn-outline" data-editor-target="create-announcement-editor"
+                      data-editor-command="underline">下划线</button>
+                    <button type="button" class="btn btn-xs btn-outline" data-editor-target="create-announcement-editor"
+                      data-editor-command="unorderedList">列表</button>
+                    <button type="button" class="btn btn-xs btn-outline" data-editor-target="create-announcement-editor"
+                      data-editor-command="orderedList">编号</button>
+                    <button type="button" class="btn btn-xs btn-outline" data-editor-target="create-announcement-editor"
+                      data-editor-command="link">链接</button>
+                    <button type="button" class="btn btn-xs btn-ghost" data-editor-target="create-announcement-editor"
+                      data-editor-command="clear">清除</button>
                   </div>
-                  <div id="create-announcement-editor" class="rich-editor" contenteditable="true" data-placeholder="请输入标题下方公告" data-empty="true"></div>
+                  <div id="create-announcement-editor" class="rich-editor" contenteditable="true"
+                    data-placeholder="请输入标题下方公告" data-empty="true"></div>
                 </div>
               </div>
               <div class="rounded-2xl border border-base-300 bg-base-200 p-4 lg:col-span-2">
@@ -397,15 +461,23 @@
                     <div class="text-sm opacity-70">显示在二维码下方，支持链接和简单排版</div>
                   </div>
                   <div class="editor-toolbar">
-                    <button type="button" class="btn btn-xs btn-outline" data-editor-target="create-hint-editor" data-editor-command="bold">粗体</button>
-                    <button type="button" class="btn btn-xs btn-outline" data-editor-target="create-hint-editor" data-editor-command="italic">斜体</button>
-                    <button type="button" class="btn btn-xs btn-outline" data-editor-target="create-hint-editor" data-editor-command="underline">下划线</button>
-                    <button type="button" class="btn btn-xs btn-outline" data-editor-target="create-hint-editor" data-editor-command="unorderedList">列表</button>
-                    <button type="button" class="btn btn-xs btn-outline" data-editor-target="create-hint-editor" data-editor-command="orderedList">编号</button>
-                    <button type="button" class="btn btn-xs btn-outline" data-editor-target="create-hint-editor" data-editor-command="link">链接</button>
-                    <button type="button" class="btn btn-xs btn-ghost" data-editor-target="create-hint-editor" data-editor-command="clear">清除</button>
+                    <button type="button" class="btn btn-xs btn-outline" data-editor-target="create-hint-editor"
+                      data-editor-command="bold">粗体</button>
+                    <button type="button" class="btn btn-xs btn-outline" data-editor-target="create-hint-editor"
+                      data-editor-command="italic">斜体</button>
+                    <button type="button" class="btn btn-xs btn-outline" data-editor-target="create-hint-editor"
+                      data-editor-command="underline">下划线</button>
+                    <button type="button" class="btn btn-xs btn-outline" data-editor-target="create-hint-editor"
+                      data-editor-command="unorderedList">列表</button>
+                    <button type="button" class="btn btn-xs btn-outline" data-editor-target="create-hint-editor"
+                      data-editor-command="orderedList">编号</button>
+                    <button type="button" class="btn btn-xs btn-outline" data-editor-target="create-hint-editor"
+                      data-editor-command="link">链接</button>
+                    <button type="button" class="btn btn-xs btn-ghost" data-editor-target="create-hint-editor"
+                      data-editor-command="clear">清除</button>
                   </div>
-                  <div id="create-hint-editor" class="rich-editor" contenteditable="true" data-placeholder="请输入二维码下方提示" data-empty="true"></div>
+                  <div id="create-hint-editor" class="rich-editor" contenteditable="true" data-placeholder="请输入二维码下方提示"
+                    data-empty="true"></div>
                 </div>
               </div>
             </div>
@@ -424,7 +496,8 @@
             <div class="grid w-full grid-cols-2 gap-2 sm:flex sm:w-auto sm:flex-wrap">
               <button id="import-btn" type="button" class="btn btn-outline btn-sm">导入 JSON</button>
               <button id="export-btn" type="button" class="btn btn-outline btn-sm">导出 JSON</button>
-              <button id="bulk-delete-btn" type="button" class="btn btn-error btn-sm col-span-2 sm:col-span-1" disabled>批量删除</button>
+              <button id="bulk-delete-btn" type="button" class="btn btn-error btn-sm col-span-2 sm:col-span-1"
+                disabled>批量删除</button>
             </div>
           </div>
 
@@ -564,11 +637,11 @@
         'alertContainer', 'theme-toggle-btn', 'theme-toggle-path', 'logout-btn', 'metric-total', 'metric-active', 'metric-expiring',
         'metric-expired', 'metric-wechat', 'metric-visits', 'upload-trigger-btn', 'reset-qr-btn', 'qr-file', 'qr-result', 'decoded-text',
         'copy-decoded-btn', 'create-qr-code-data', 'create-name', 'create-path', 'create-target', 'create-expiry', 'create-enabled',
-        'create-wechat', 'create-announcement-editor', 'create-hint-editor', 'create-submit-btn', 'import-btn', 'export-btn', 'bulk-delete-btn', 'view-all-btn', 'view-expiring-btn',
+        'create-wechat', 'create-redirect-mode', 'create-announcement-editor', 'create-hint-editor', 'create-submit-btn', 'import-btn', 'export-btn', 'bulk-delete-btn', 'view-all-btn', 'view-expiring-btn',
         'view-expired-btn', 'search-input', 'status-select', 'type-select', 'sort-by-select', 'sort-order-select', 'selection-summary',
         'clear-selection-btn', 'page-size-select', 'list-loading', 'select-all-checkbox', 'table-body', 'mobile-list', 'empty-state',
         'pagination-summary', 'prev-page-btn', 'next-page-btn', 'import-file', 'qr-modal', 'qr-container', 'qr-url', 'qr-show-logo',
-        'qr-dots-style', 'qr-download', 'edit-modal', 'edit-name', 'edit-path', 'edit-target', 'edit-expiry', 'edit-enabled', 'edit-wechat', 'edit-announcement-editor', 'edit-hint-editor',
+        'qr-dots-style', 'qr-download', 'edit-modal', 'edit-name', 'edit-path', 'edit-target', 'edit-expiry', 'edit-enabled', 'edit-wechat', 'edit-redirect-mode', 'edit-announcement-editor', 'edit-hint-editor',
         'edit-upload-btn', 'edit-qr-file', 'edit-qr-result', 'edit-decoded-text', 'edit-qr-code-data', 'edit-save-btn', 'delete-modal',
         'delete-message', 'delete-confirm-btn'
       ];
@@ -1302,6 +1375,7 @@
         expiry: elements['create-expiry'].value,
         enabled: elements['create-enabled'].checked,
         isWechat: elements['create-wechat'].checked,
+        redirectMode: elements['create-redirect-mode'].value,
         qrCodeData: elements['create-wechat'].checked ? elements['create-qr-code-data'].value : null,
         announcementHtml: getEditorHtml('create-announcement-editor', DEFAULT_ANNOUNCEMENT_HTML),
         hintHtml: getEditorHtml('create-hint-editor', DEFAULT_HINT_HTML)
@@ -1319,6 +1393,7 @@
         expiry: elements['edit-expiry'].value,
         enabled: elements['edit-enabled'].checked,
         isWechat: elements['edit-wechat'].checked,
+        redirectMode: elements['edit-redirect-mode'].value,
         qrCodeData: elements['edit-wechat'].checked ? elements['edit-qr-code-data'].value : null,
         announcementHtml: getEditorHtml('edit-announcement-editor', DEFAULT_ANNOUNCEMENT_HTML),
         hintHtml: getEditorHtml('edit-hint-editor', DEFAULT_HINT_HTML)
@@ -1355,6 +1430,7 @@
       elements['edit-expiry'].value = item.expiry || '';
       elements['edit-enabled'].checked = item.enabled;
       elements['edit-wechat'].checked = item.isWechat;
+      elements['edit-redirect-mode'].value = item.redirectMode || '302';
       setEditorHtml('edit-announcement-editor', item.announcementHtml || DEFAULT_ANNOUNCEMENT_HTML);
       setEditorHtml('edit-hint-editor', item.hintHtml || DEFAULT_HINT_HTML);
       elements['edit-qr-code-data'].value = item.qrCodeData || '';
@@ -1736,4 +1812,5 @@
     document.addEventListener('DOMContentLoaded', init);
   </script>
 </body>
+
 </html>
